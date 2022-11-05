@@ -91,13 +91,15 @@ public class App {
       		+ "    AND pwd = ?"
       		+ "    AND nickname = ?";
 
-
+      System.out.println("-----------------------------");
+      System.out.println("        삭제할 멤버");
       System.out.print("아이디: ");
       int id = sc.nextInt();
       System.out.print("\n이름: ");
       String nickName = sc.next();
       System.out.print("\n비밀 번호: ");
       String pwd = sc.next();
+      System.out.println("-----------------------------");
 
       String url = "jdbc:oracle:thin:@ict.newlecture.com:1521/xepdb1";
 
@@ -113,6 +115,8 @@ public class App {
 
       st.close();
       con.close();
+
+      System.out.println("     멤버를 삭제했습니다");
    }
 
    private static void updateMember() throws ClassNotFoundException, SQLException {
@@ -120,34 +124,52 @@ public class App {
 
       String sql = "UPDATE member "
          + "SET"
-         + "    a = b"
+         + "    id = ?,"
+         + "    pwd = ?,"
+         + "    nickname = ?"
+
          + "WHERE"
          + "        id = ?"
          + "    AND pwd = ?"
          + "    AND nickname = ?";
 
 
+      System.out.println("-----------------------------");
+      System.out.println("        변경할 멤버");
       System.out.print("아이디: ");
       int id = sc.nextInt();
       System.out.print("\n이름: ");
       String nickName = sc.next();
       System.out.print("\n비밀 번호: ");
       String pwd = sc.next();
-
+      System.out.println("-----------------------------");
+      System.out.println("-----------------------------");
+      System.out.print("새로운 아이디: ");
+      int newId = sc.nextInt();
+      System.out.print("\n새로운 이름: ");
+      String newNickName = sc.next();
+      System.out.print("\n새로운 비밀 번호: ");
+      String newPwd = sc.next();
+      System.out.println("-----------------------------");
+      
       String url = "jdbc:oracle:thin:@ict.newlecture.com:1521/xepdb1";
 
       Class.forName("oracle.jdbc.driver.OracleDriver"); // DB driver
       Connection con = DriverManager.getConnection(url, "NEWLEC", "rland"); // JDBC driver
       // Statement st = con.createStatement();
       PreparedStatement st = con.prepareStatement(sql);
-      st.setInt(1, id);
-      st.setString(2, pwd);
-      st.setString(3, nickName);
+      st.setInt(1, newId);
+      st.setString(2, newPwd);
+      st.setString(3, newNickName);
+      st.setInt(4, id);
+      st.setString(5, pwd);
+      st.setString(6, nickName);
       // insert/update/delete 문장을 실행할 때
       st.executeUpdate();
 
       st.close();
       con.close();
+      System.out.println("     멤버를 변경했습니다");
    }
    
 
@@ -184,6 +206,22 @@ public class App {
 
       // insert/update/delete 문장을 실행할 때
       st.executeUpdate();
+
+      // select member that added
+      String sqlAdded = String.format("SELECT * FROM MEMBER WHERE NICKNAME='%s'", nickName);
+      Statement stAdded = con.createStatement();
+      ResultSet rs = stAdded.executeQuery(sqlAdded);
+
+      rs.next();
+      int idAdded = rs.getInt("ID");
+      String nicknameAdded = rs.getString("NICKNAME");
+      String pwdAdded = rs.getString("pwd");
+
+      System.out.println("-----------------------------");
+      System.out.println("        추가한 멤버");
+      System.out.printf("id:%5d, \tpwd:%5s, \tnicName:%5s\n", idAdded, pwdAdded, nicknameAdded);
+      System.out.println("-----------------------------");
+
 
       st.close();
       con.close();
